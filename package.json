@@ -4,10 +4,8 @@
   "license": "MIT",
   "scripts": {},
   "private": true,
-  "dependencies": {
-    "@naxodev/gonx": "1.2.0"
-  },
   "devDependencies": {
+    "@naxodev/gonx": "^1.2.0",
     "@nx/workspace": "21.1.3",
     "nx": "21.1.3"
   }
