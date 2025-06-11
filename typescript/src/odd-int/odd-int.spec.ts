@@ -1,4 +1,4 @@
-import {oddInt} from './odd-int'
+import { oddInt } from './odd-int';
 
 describe('oddInt', () => {
   const testCases: { input: number[]; expected: number }[] = [
