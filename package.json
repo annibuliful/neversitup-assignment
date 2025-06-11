@@ -6,7 +6,7 @@
     "commitlint": "commitlint --edit",
     "golang:run:test": "go test -timeout=10m ./golang/...",
     "typescript:run:test": "nx test typescript",
-    "frontend:run:dev": "nx dev frontend"
+    "frontend:run:dev": "nx dev frontend --port 4200"
   },
   "private": true,
   "devDependencies": {
@@ -61,6 +61,7 @@
   "dependencies": {
     "next": "15.3.3",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "react-hook-form": "^7.57.0"
   }
 }
