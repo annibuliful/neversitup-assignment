@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "commitlint": "commitlint --edit",
+    "golang:run:test": "go test -timeout=10m ./golang/...",
     "test": ""
   },
   "private": true,
