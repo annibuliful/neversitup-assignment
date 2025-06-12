@@ -14,6 +14,7 @@ const nextConfig = {
   output: 'standalone',
   // Ensure proper routing for Vercel
   trailingSlash: false,
+  distDir: '../dist/frontend',
 };
 
 const plugins = [
