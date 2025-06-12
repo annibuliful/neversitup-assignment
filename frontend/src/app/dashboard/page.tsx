@@ -14,6 +14,7 @@ export default function Page() {
     addTodo,
     toggleTodo,
     deleteTodo,
+    updateTodo,
     remainingCount,
     createLoading,
   } = useTodos();
@@ -45,6 +46,7 @@ export default function Page() {
             todo={todo}
             onToggle={toggleTodo}
             onDelete={deleteTodo}
+            onEdit={updateTodo}
           />
         ))}
       </ul>

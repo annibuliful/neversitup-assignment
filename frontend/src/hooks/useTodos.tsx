@@ -36,6 +36,36 @@ export function useTodos() {
     setTodos(todoResponse.data);
   }, [todoResponse]);
 
+  const updateTodo = async (data: {
+    id: string;
+    title: string;
+    description: string;
+  }) => {
+    if (!data.title.trim()) return;
+
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === data.id ? { ...todo, ...data } : todo))
+    );
+
+    const todo = todos.find((el) => el.id === data.id);
+
+    if (!todo) return;
+
+    const { error } = await updateMutation({
+      params: {
+        id: data.id,
+      },
+      body: {
+        title: data.title,
+        description: data.description,
+      },
+    });
+
+    if (error) {
+      console.error('[toggle-todo]: ', error);
+    }
+  };
+
   const addTodo = async (title: string, description: string) => {
     if (!title.trim()) return;
 
@@ -101,6 +131,7 @@ export function useTodos() {
     addTodo,
     toggleTodo,
     deleteTodo,
+    updateTodo,
     remainingCount,
     todoFetching,
     todoFetchingError,
