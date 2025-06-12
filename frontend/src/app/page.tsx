@@ -8,8 +8,10 @@ import { useApiMutation } from '../hooks/useApiMutation';
 import { setCookie } from 'cookies-next';
 import { ACCESS_ID_KEY, ACCESS_TOKEN_KEY } from '../constant/api';
 import { jwtDecode } from 'jwt-decode';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+  const router = useRouter();
   const [isSignIn, setIsSignIn] = useState(true);
 
   const {
@@ -49,8 +51,10 @@ export default function Page() {
     const accessToken = response.access_token;
 
     const { id } = jwtDecode<{ id: string }>(accessToken);
-    setCookie(ACCESS_ID_KEY, id);
-    setCookie(ACCESS_TOKEN_KEY, response.access_token);
+    await setCookie(ACCESS_ID_KEY, id);
+    await setCookie(ACCESS_TOKEN_KEY, response.access_token);
+
+    router.push('/dashboard');
   };
 
   return (
