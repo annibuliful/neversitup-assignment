@@ -1,3 +1,4 @@
+import { getCookie } from 'cookies-next';
 import {
   ApiSchema,
   ExtractBody,
@@ -6,7 +7,7 @@ import {
   HttpMethod,
   PathForMethod,
 } from '../@types/api';
-import { BASE_URL_PREFIX } from '../constant/api';
+import { ACCESS_TOKEN_KEY, BASE_URL_PREFIX } from '../constant/api';
 
 function interpolatePath(path: string, params?: Record<string, string>) {
   if (!params) return path;
@@ -44,11 +45,16 @@ export async function apiFetcher<
     url += `?${qs.toString()}`;
   }
 
+  const accessToken = await getCookie(ACCESS_TOKEN_KEY);
+
   const response = await fetch(`${BASE_URL_PREFIX}${url}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...(accessToken && {
+        Authorization: `Bearer ${accessToken}`,
+      }),
       ...headers,
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
@@ -56,7 +62,7 @@ export async function apiFetcher<
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`HTTP ${response.status}: ${errorText}`);
+    throw new Error(errorText);
   }
 
   return response.json();

@@ -42,3 +42,5 @@ export type PathForMethod<M extends HttpMethod> = keyof ApiSchema[M];
 export type ExtractParams<T> = T extends { params: infer P } ? P : undefined;
 export type ExtractBody<T> = T extends { body: infer B } ? B : undefined;
 export type ExtractResponse<T> = T extends { response: infer R } ? R : never;
+
+export type ErrorResponse = { statusCode: number; message: string };
