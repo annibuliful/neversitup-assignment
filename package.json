@@ -6,7 +6,8 @@
     "commitlint": "commitlint --edit",
     "golang:run:test": "go test -timeout=10m ./golang/...",
     "typescript:run:test": "nx test typescript",
-    "frontend:run:dev": "nx dev frontend --port 4200"
+    "frontend:run:dev": "nx dev frontend --port 4200",
+    "frontend:run:build": "nx build frontend"
   },
   "private": true,
   "devDependencies": {
