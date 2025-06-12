@@ -16,16 +16,6 @@
   },
   "plugins": [
     {
-      "plugin": "@naxodev/gonx",
-      "options": {
-        "buildTargetName": "build",
-        "serveTargetName": "serve",
-        "testTargetName": "test",
-        "lintTargetName": "lint",
-        "tidyTargetName": "tidy"
-      }
-    },
-    {
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
