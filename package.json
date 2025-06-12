@@ -7,7 +7,7 @@
     "golang:run:test": "go test -timeout=10m ./golang/...",
     "typescript:run:test": "nx test typescript",
     "frontend:run:dev": "nx dev frontend --port 4200",
-    "frontend:run:build": "export NX_DAEMON=false; nx build frontend"
+    "frontend:run:build": "nx build frontend --skip-project-graph"
   },
   "private": true,
   "devDependencies": {
