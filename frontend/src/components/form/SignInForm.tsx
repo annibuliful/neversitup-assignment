@@ -1,12 +1,19 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
-interface SignInFormProps {
+export type SignInFormProps = {
   onSubmit: (data: { username: string; password: string }) => void;
-}
+  isLoading: boolean;
+  errorMessage: string | null;
+};
 
-export function SignInForm({ onSubmit }: SignInFormProps) {
+export function SignInForm({
+  onSubmit,
+  isLoading,
+  errorMessage,
+}: SignInFormProps) {
   const {
     register,
     handleSubmit,
@@ -58,10 +65,17 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
 
       <button
         type="submit"
-        className="flex w-full justify-center rounded-md bg-brand-700 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+        disabled={isLoading}
+        className="flex w-full items-center justify-center gap-2 rounded-md bg-brand-700 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
       >
+        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         Sign in
       </button>
+      {errorMessage && (
+        <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 mt-1">
+          {errorMessage}
+        </div>
+      )}
     </form>
   );
 }
