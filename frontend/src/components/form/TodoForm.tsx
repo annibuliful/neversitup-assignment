@@ -1,40 +1,63 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface TodoFormProps {
   onAdd: (title: string, description: string) => void;
   loading: boolean;
 }
 
-export function TodoForm({ onAdd, loading = false }: TodoFormProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+interface FormData {
+  title: string;
+  description: string;
+}
 
-  const handleSubmit = () => {
-    if (!title.trim()) return;
-    onAdd(title, description);
-    setTitle('');
-    setDescription('');
+export function TodoForm({ onAdd, loading = false }: TodoFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
+    defaultValues: {
+      title: '',
+      description: '',
+    },
+  });
+
+  const onSubmit = ({ title, description }: FormData) => {
+    onAdd(title.trim(), description || '');
+    reset();
   };
 
   return (
-    <div className="space-y-2 mb-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 mb-4">
       <input
         type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
         placeholder="Add new task title..."
-        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         disabled={loading}
+        className={`w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+          errors.title ? 'border-red-500 ring-red-400' : 'focus:ring-brand-500'
+        }`}
+        {...register('title', {
+          required: 'Title is required',
+          minLength: {
+            value: 3,
+            message: 'Title must be at least 3 characters',
+          },
+        })}
       />
+      {errors.title && (
+        <p className="text-sm text-red-500 -mt-1">{errors.title.message}</p>
+      )}
+
       <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
         placeholder="Add task description (optional)"
-        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         disabled={loading}
+        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+        {...register('description')}
       />
+
       <button
-        onClick={handleSubmit}
+        type="submit"
         disabled={loading}
         className={`w-full py-2 rounded transition text-white ${
           loading
@@ -44,6 +67,6 @@ export function TodoForm({ onAdd, loading = false }: TodoFormProps) {
       >
         {loading ? 'Adding...' : '+ Add Task'}
       </button>
-    </div>
+    </form>
   );
 }
