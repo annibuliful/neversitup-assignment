@@ -3,7 +3,7 @@ import { Todo } from './todo';
 export type ApiSchema = {
   GET: {
     '/health': { response: string };
-    '/todo': { response: Todo[] };
+    '/todo': { response: { isSuccess: boolean; data: Todo[] } };
     '/todo/all': { response: Todo[] };
     '/todo/:id': { params: { id: string }; response: Todo };
   };
@@ -17,14 +17,17 @@ export type ApiSchema = {
       response: unknown;
     };
     '/todo': {
-      body: Pick<Todo, 'title' | 'description'>;
-      response: Todo;
+      body: Pick<Todo, 'title' | 'description' | 'completed'>;
+      response: {
+        isSuccess: boolean;
+        data: Todo;
+      };
     };
   };
   PATCH: {
     '/todo/:id': {
       params: { id: string };
-      body: Partial<Todo>;
+      body: Partial<Omit<Todo, 'id'>>;
       response: Todo;
     };
   };
