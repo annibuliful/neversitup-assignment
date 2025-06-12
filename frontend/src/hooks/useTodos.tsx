@@ -68,21 +68,30 @@ export function useTodos() {
 
     todo.completed = !todo.completed;
 
-    await updateMutation({
+    const { error } = await updateMutation({
       params: {
         id,
       },
       body: todo,
     });
+
+    if (error) {
+      console.error('[toggle-todo]: ', error);
+    }
   };
 
   const deleteTodo = async (id: string) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
-    await deleteMutation({
+
+    const { error } = await deleteMutation({
       params: {
         id,
       },
     });
+
+    if (error) {
+      console.error('[delete-todo]: ', error);
+    }
   };
 
   const remainingCount = todos.filter((t) => !t.completed).length;

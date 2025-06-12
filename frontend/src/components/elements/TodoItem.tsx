@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import { Todo } from '../../@types/todo';
 
 interface TodoItemProps {
@@ -39,7 +40,7 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
         onClick={() => onDelete(todo.id)}
         className="text-gray-400 hover:text-red-500 text-sm"
       >
-        ✕
+        <X />
       </button>
     </li>
   );
