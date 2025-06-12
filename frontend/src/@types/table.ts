@@ -19,4 +19,6 @@ export type ItemData = {
   no: number;
 };
 
-export type ColumnType = 'To-do' | 'In-progress' | 'Done';
+export type RowData = {
+  [K in ColumnKey]: K extends 'no' ? number : string;
+};
