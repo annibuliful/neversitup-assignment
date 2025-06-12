@@ -4,6 +4,7 @@ import {
   ExtractParams,
   ApiSchema,
   ExtractResponse,
+  ErrorResponse,
 } from '../@types/api';
 import { apiFetcher } from '../api/fetcher';
 
@@ -19,7 +20,7 @@ export function useApiQuery<P extends PathForMethod<'GET'> & string>(
   const [data, setData] = useState<ExtractResponse<ApiSchema['GET'][P]> | null>(
     null
   );
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<ErrorResponse | null>(null);
   const [loading, setLoading] = useState(!options?.lazy);
 
   const fetchData = useCallback(async () => {
@@ -33,7 +34,7 @@ export function useApiQuery<P extends PathForMethod<'GET'> & string>(
       });
       setData(response);
     } catch (err) {
-      setError(err as Error);
+      setError(err as ErrorResponse);
     } finally {
       setLoading(false);
     }

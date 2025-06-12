@@ -6,6 +6,7 @@ import {
   ApiSchema,
   ExtractParams,
   ExtractBody,
+  ErrorResponse,
 } from '../@types/api';
 import { apiFetcher } from '../api/fetcher';
 
@@ -17,7 +18,7 @@ export function useApiMutation<
   const [globalData, setGlobalData] = useState<ExtractResponse<
     ApiSchema[M][P]
   > | null>(null);
-  const [globalError, setGlobalError] = useState<Error | null>(null);
+  const [globalError, setGlobalError] = useState<ErrorResponse | null>(null);
 
   const mutate = useCallback(
     async (
@@ -31,7 +32,7 @@ export function useApiMutation<
       const state = {
         loading: true,
         data: null as ExtractResponse<ApiSchema[M][P]> | null,
-        error: null as Error | null,
+        error: null as ErrorResponse | null,
       };
 
       setGlobalLoading(true);
@@ -42,8 +43,8 @@ export function useApiMutation<
         setGlobalData(response);
         return { ...state, loading: false };
       } catch (err) {
-        state.error = err as Error;
-        setGlobalError(err as Error);
+        state.error = JSON.parse((err as Error).message);
+        setGlobalError(state.error);
         return { ...state, loading: false };
       } finally {
         setGlobalLoading(false);
