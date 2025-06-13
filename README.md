@@ -74,6 +74,6 @@ pnpm run typescript:run:test
 
 ## Message from me
 
-Firstly, Honestly I forgot about permutation(Heap algorithm) which had been used to solve "manipulate" question so I followed [permutation-string](https://www.geeksforgeeks.org/print-all-permutations-of-a-string-with-duplicates-allowed-in-input-string/) and [heaps algorithms](https://www.geeksforgeeks.org/dsa/heaps-algorithm-for-generating-permutations/) to solve it
+Honestly I forgot about permutation(Heap algorithm) which had been used to solve "manipulate" question so I followed [permutation-string](https://www.geeksforgeeks.org/print-all-permutations-of-a-string-with-duplicates-allowed-in-input-string/) and [heaps algorithms](https://www.geeksforgeeks.org/dsa/heaps-algorithm-for-generating-permutations/) to solve it
 
-Secondly, I don't have much time to implement Bonus point for Frontend assignements.
+I don't have much time to implement Bonus point for Frontend assignements which is about transforming 2 dimensional array to freindly JSON format, but you can check the utils function with Typescript types safe [HERE](https://github.com/annibuliful/neversitup-assignment/blob/main/frontend/src/utils/table.ts)
