@@ -8,11 +8,15 @@ import { useApiMutation } from '../hooks/useApiMutation';
 import { setCookie } from 'cookies-next';
 import { ACCOUNT_ID_KEY, ACCESS_TOKEN_KEY } from '../constant/api';
 import { jwtDecode } from 'jwt-decode';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthorizedSession } from '../hooks/useAuthorizedSession';
+import { randomString } from '../utils/random';
 
 export default function Page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const skipSignInQuery = searchParams.get('skip-sign-in');
+  const shouldSkip = skipSignInQuery === 'true';
   const [isSignIn, setIsSignIn] = useState(true);
 
   const { data: authenticatedData, loading: authenticationLoading } =
@@ -30,8 +34,21 @@ export default function Page() {
     error: signInError,
   } = useApiMutation('POST', '/auth/login');
 
+  const handleSkipSignIn = async () => {
+    const username = randomString(9);
+    const password = randomString(9);
+    await signUpMutation({
+      body: {
+        username,
+        password,
+      },
+    });
+
+    await handleSignIn({ username, password });
+  };
+
   const handleSignUp = (data: { username: string; password: string }) => {
-    signUpMutation({
+    return signUpMutation({
       body: {
         username: data.username,
         password: data.password,
@@ -62,12 +79,18 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (shouldSkip) {
+      handleSkipSignIn();
+    }
+  }, [shouldSkip]);
+
+  useEffect(() => {
     if (authenticatedData?.isSuccess) {
       router.replace('/dashboard');
     }
   }, [authenticatedData, router]);
 
-  if (authenticationLoading) {
+  if (authenticationLoading || shouldSkip) {
     return null;
   }
 
