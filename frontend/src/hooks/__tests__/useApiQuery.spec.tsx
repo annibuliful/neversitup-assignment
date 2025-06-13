@@ -57,7 +57,7 @@ describe('useApiQuery', () => {
       );
 
       await act(async () => {
-        await result.current.refetch();
+        await result.current.fetch();
       });
 
       expect(result.current.data).toEqual(mockData);
@@ -132,7 +132,7 @@ describe('useApiQuery', () => {
       );
 
       await act(async () => {
-        await result.current.refetch();
+        await result.current.fetch();
       });
 
       expect(result.current.error).toEqual(mockError);
@@ -141,7 +141,7 @@ describe('useApiQuery', () => {
       mockApiFetcher.mockResolvedValue(mockData);
 
       await act(async () => {
-        await result.current.refetch();
+        await result.current.fetch();
       });
 
       expect(result.current.error).toBe(null);
@@ -167,7 +167,7 @@ describe('useApiQuery', () => {
       expect(result.current.loading).toBe(false);
 
       act(() => {
-        result.current.refetch();
+        result.current.fetch();
       });
 
       expect(result.current.loading).toBe(true);

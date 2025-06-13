@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   PathForMethod,
   ExtractParams,
@@ -8,47 +8,67 @@ import {
 } from '../@types/api';
 import { apiFetcher } from '../api/fetcher';
 
-export function useApiQuery<P extends PathForMethod<'GET'> & string>(
+interface QueryOptions<P extends PathForMethod<'GET'>> {
+  params?: ExtractParams<ApiSchema['GET'][P]>;
+  query?: Record<string, string | number | boolean>;
+  headers?: HeadersInit;
+  lazy?: boolean;
+}
+
+export function useApiQuery<P extends PathForMethod<'GET'>>(
   path: P,
-  options?: {
-    params?: ExtractParams<ApiSchema['GET'][P]>;
-    query?: Record<string, string | number | boolean>;
-    headers?: HeadersInit;
-    lazy?: boolean;
-  }
+  options?: QueryOptions<P>
 ) {
   const [data, setData] = useState<ExtractResponse<ApiSchema['GET'][P]> | null>(
     null
   );
   const [error, setError] = useState<ErrorResponse | null>(null);
-  const [loading, setLoading] = useState(!options?.lazy);
+  const [loading, setLoading] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await apiFetcher('GET', path, {
-        params: options?.params,
-        query: options?.query,
-        headers: options?.headers,
-      });
-      setData(response);
-    } catch (err) {
-      setError(err as ErrorResponse);
-    } finally {
-      setLoading(false);
-    }
-  }, [options?.headers, options?.params, options?.query, path]);
-
-  // Auto-fetch unless lazy
-  useState(() => {
-    if (!options?.lazy) fetchData();
+  const defaultOptionsRef = useRef({
+    params: options?.params,
+    query: options?.query,
+    headers: options?.headers,
   });
+
+  const fetch = useCallback(
+    async (overrideOptions?: Omit<QueryOptions<P>, 'lazy'>) => {
+      const finalParams = {
+        ...defaultOptionsRef.current,
+        ...overrideOptions,
+      };
+
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await apiFetcher('GET', path, {
+          params: finalParams.params,
+          query: finalParams.query,
+          headers: finalParams.headers,
+        });
+
+        setData(response);
+        return response;
+      } catch (err) {
+        setError(err as ErrorResponse);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [path]
+  );
+
+  useEffect(() => {
+    if (!options?.lazy) {
+      fetch();
+    }
+  }, [fetch, options?.lazy]);
 
   return {
     data,
     error,
     loading,
-    refetch: fetchData,
+    fetch,
   };
 }
