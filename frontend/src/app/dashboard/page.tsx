@@ -5,7 +5,7 @@ import { TodoItem } from '../../components/elements/TodoItem';
 import { TodoForm } from '../../components/form/TodoForm';
 import { useTodos } from '../../hooks/useTodos';
 import { deleteCookie } from 'cookies-next';
-import { ACCESS_ID_KEY, ACCESS_TOKEN_KEY } from '../../constant/api';
+import { ACCOUNT_ID_KEY, ACCESS_TOKEN_KEY } from '../../constant/api';
 
 export default function Page() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function Page() {
 
   const handleLogout = async () => {
     await deleteCookie(ACCESS_TOKEN_KEY);
-    await deleteCookie(ACCESS_ID_KEY);
+    await deleteCookie(ACCOUNT_ID_KEY);
     router.push('/');
   };
 
