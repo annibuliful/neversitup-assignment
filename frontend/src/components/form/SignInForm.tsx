@@ -1,6 +1,7 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 export type SignInFormProps = {
@@ -18,10 +19,17 @@ export function SignInForm({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<{ username: string; password: string }>();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit((data) => {
+        onSubmit(data);
+        reset();
+      })}
+      className="space-y-6"
+    >
       <div>
         <label
           htmlFor="email"

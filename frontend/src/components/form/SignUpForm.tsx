@@ -14,15 +14,20 @@ export function SignUpForm({
   isLoading,
   errorMessage,
 }: SignUpFormProps) {
-  console.log('err', errorMessage);
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<{ username: string; password: string }>();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit((data) => {
+        onSubmit(data);
+        reset();
+      })}
+    >
       <div className="space-y-6">
         <div>
           <label
