@@ -1,18 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SignInForm } from '../components/form/SignInForm';
 import { SignUpForm } from '../components/form/SignUpForm';
 import { AuthTabs } from '../components/elements/AuthTabs';
 import { useApiMutation } from '../hooks/useApiMutation';
 import { setCookie } from 'cookies-next';
-import { ACCESS_ID_KEY, ACCESS_TOKEN_KEY } from '../constant/api';
+import { ACCOUNT_ID_KEY, ACCESS_TOKEN_KEY } from '../constant/api';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
+import { useAuthorizedSession } from '../hooks/useAuthorizedSession';
 
 export default function Page() {
   const router = useRouter();
   const [isSignIn, setIsSignIn] = useState(true);
+
+  const { data: authenticatedData, loading: authenticationLoading } =
+    useAuthorizedSession();
 
   const {
     mutate: signUpMutation,
@@ -51,11 +55,21 @@ export default function Page() {
     const accessToken = response.access_token;
 
     const { id } = jwtDecode<{ id: string }>(accessToken);
-    await setCookie(ACCESS_ID_KEY, id);
+    await setCookie(ACCOUNT_ID_KEY, id);
     await setCookie(ACCESS_TOKEN_KEY, response.access_token);
 
     router.push('/dashboard');
   };
+
+  useEffect(() => {
+    if (authenticatedData?.isSuccess) {
+      router.replace('/dashboard');
+    }
+  }, [authenticatedData, router]);
+
+  if (authenticationLoading || !authenticatedData) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 md:px-8">
