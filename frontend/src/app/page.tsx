@@ -67,7 +67,7 @@ export default function Page() {
     }
   }, [authenticatedData, router]);
 
-  if (authenticationLoading || !authenticatedData) {
+  if (authenticationLoading) {
     return null;
   }
 
