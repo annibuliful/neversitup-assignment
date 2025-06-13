@@ -8,15 +8,12 @@ import { useApiMutation } from '../hooks/useApiMutation';
 import { setCookie } from 'cookies-next';
 import { ACCOUNT_ID_KEY, ACCESS_TOKEN_KEY } from '../constant/api';
 import { jwtDecode } from 'jwt-decode';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuthorizedSession } from '../hooks/useAuthorizedSession';
 import { randomString } from '../utils/random';
 
 export default function Page() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const skipSignInQuery = searchParams.get('skip-sign-in');
-  const shouldSkip = skipSignInQuery === 'true';
   const [isSignIn, setIsSignIn] = useState(true);
 
   const { data: authenticatedData, loading: authenticationLoading } =
@@ -77,6 +74,14 @@ export default function Page() {
 
     router.push('/dashboard');
   };
+
+  const [shouldSkip, setShouldSkip] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const skipSignInQuery = params.get('skip-sign-in');
+    setShouldSkip(skipSignInQuery === 'true');
+  }, []);
 
   useEffect(() => {
     if (shouldSkip) {
