@@ -1,4 +1,5 @@
 import { Todo } from './todo';
+import { User } from './user';
 
 export type ApiSchema = {
   GET: {
@@ -6,6 +7,10 @@ export type ApiSchema = {
     '/todo': { response: { isSuccess: boolean; data: Todo[] } };
     '/todo/all': { response: Todo[] };
     '/todo/:id': { params: { id: string }; response: Todo };
+    '/users/:id': {
+      params: { id: string };
+      response: { isSuccess: boolean; data: User };
+    };
   };
   POST: {
     '/auth/login': {
