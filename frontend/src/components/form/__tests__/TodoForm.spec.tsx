@@ -1,16 +1,17 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TodoForm } from '../TodoForm';
+import '@testing-library/jest-dom';
 
 describe('TodoForm', () => {
-  const setup = (props = { loading: false }) => {
-    const onAdd = jest.fn();
-    render(<TodoForm onAdd={onAdd} {...props} />);
-    return { onAdd };
-  };
+  const mockOnAdd = jest.fn();
 
-  test('renders input fields and submit button', () => {
-    setup();
+  beforeEach(() => {
+    mockOnAdd.mockReset();
+  });
+
+  it('renders input fields and submit button', () => {
+    render(<TodoForm onAdd={mockOnAdd} loading={false} />);
+
     expect(
       screen.getByPlaceholderText(/add new task title/i)
     ).toBeInTheDocument();
@@ -22,52 +23,52 @@ describe('TodoForm', () => {
     ).toBeInTheDocument();
   });
 
-  test('does not call onAdd if title is empty', () => {
-    const { onAdd } = setup();
-    fireEvent.click(screen.getByRole('button', { name: /\+ add task/i }));
-    expect(onAdd).not.toHaveBeenCalled();
+  it('shows validation error if title is empty', async () => {
+    render(<TodoForm onAdd={mockOnAdd} loading={false} />);
+    fireEvent.submit(screen.getByRole('button'));
+
+    expect(await screen.findByText(/title is required/i)).toBeInTheDocument();
+    expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
-  test('calls onAdd with title and description', () => {
-    const { onAdd } = setup();
+  it('shows error for title shorter than 3 characters', async () => {
+    render(<TodoForm onAdd={mockOnAdd} loading={false} />);
     fireEvent.change(screen.getByPlaceholderText(/add new task title/i), {
-      target: { value: 'Test task' },
+      target: { value: 'Hi' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/add task description/i), {
-      target: { value: 'Test description' },
-    });
+    fireEvent.submit(screen.getByRole('button'));
 
-    fireEvent.click(screen.getByRole('button', { name: /\+ add task/i }));
-
-    expect(onAdd).toHaveBeenCalledWith('Test task', 'Test description');
+    expect(
+      await screen.findByText(/at least 3 characters/i)
+    ).toBeInTheDocument();
+    expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
-  test('clears inputs after successful submission', () => {
-    const { onAdd } = setup();
-    const titleInput = screen.getByPlaceholderText(
-      /add new task title/i
-    ) as HTMLInputElement;
-    const descriptionInput = screen.getByPlaceholderText(
-      /add task description/i
-    ) as HTMLTextAreaElement;
+  it('calls onAdd with correct values and resets form', async () => {
+    render(<TodoForm onAdd={mockOnAdd} loading={false} />);
+    const titleInput = screen.getByPlaceholderText(/add new task title/i);
+    const descriptionInput =
+      screen.getByPlaceholderText(/add task description/i);
 
-    fireEvent.change(titleInput, { target: { value: 'Task' } });
-    fireEvent.change(descriptionInput, { target: { value: 'Desc' } });
-    fireEvent.click(screen.getByRole('button', { name: /\+ add task/i }));
+    fireEvent.change(titleInput, { target: { value: 'My Task' } });
+    fireEvent.change(descriptionInput, { target: { value: 'Details here' } });
 
-    expect(onAdd).toHaveBeenCalledWith('Task', 'Desc');
-    expect(titleInput.value).toBe('');
-    expect(descriptionInput.value).toBe('');
+    fireEvent.submit(screen.getByRole('button'));
+
+    await waitFor(() => {
+      expect(mockOnAdd).toHaveBeenCalledWith('My Task', 'Details here');
+    });
+
+    expect(titleInput).toHaveValue('');
+    expect(descriptionInput).toHaveValue('');
   });
 
-  test('disables inputs and button when loading is true', () => {
-    setup({ loading: true });
+  it('disables inputs and button when loading is true', () => {
+    render(<TodoForm onAdd={mockOnAdd} loading={true} />);
 
     expect(screen.getByPlaceholderText(/add new task title/i)).toBeDisabled();
     expect(screen.getByPlaceholderText(/add task description/i)).toBeDisabled();
-
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-    expect(button).toHaveTextContent('Adding...');
+    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByRole('button')).toHaveTextContent(/adding/i);
   });
 });
